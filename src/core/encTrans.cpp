@@ -31,7 +31,7 @@
 #include "encTrans.hpp"
 
 //void processFrame_osd(int cap_chid,unsigned char *src)
-void CEncTrans::process(Mat img, int chId, int pixFmt)
+void CEncTrans::pushData(Mat img, int chId, int pixFmt)
 {
 	OSA_assert(pixFmt == V4L2_PIX_FMT_YUV420M);
 	//return CRender::display(img, chId, code);
@@ -39,6 +39,12 @@ void CEncTrans::process(Mat img, int chId, int pixFmt)
 		gstCapturePushData(record_handle[chId],(char *)img.data,img.cols*img.rows*img.channels());
 	}
 	return ;
+}
+
+void CEncTrans::scheduler(int chId)
+{
+	if(m_semScheduler[chId] != NULL)
+		OSA_semSignal(m_semScheduler[chId]);
 }
 
 int CEncTrans::init(ENCTRAN_InitPrm *pPrm)
@@ -99,7 +105,15 @@ int CEncTrans::create()
 
 	OSA_mutexCreate(&m_mutex);
 	ret = sync422_spi_create(0,0);// 0 0
-	initGstCap();
+	//for(int i=0; i<QUE_CHID_COUNT; i++){
+	//	m_semScheduler[i] = new OSA_SemHndl;
+	//	OSA_semCreate(m_semScheduler[i], 1, 0);
+	//}
+	initGstCap((void**)m_semScheduler);
+	for(int i=0; i<QUE_CHID_COUNT; i++){
+		m_bufQue[i] = record_handle[i]->pushQueue;
+		m_bufSem[i] = record_handle[i]->pushSem;
+	}
 
 	return ret;
 }
@@ -109,6 +123,14 @@ int CEncTrans::destroy()
 	int ret = 0;
 	OSA_mutexLock(&m_mutex);
 	UninitGstCap();
+	for(int i=0; i<QUE_CHID_COUNT; i++){
+		if(m_semScheduler[i] == NULL)
+			continue;
+		OSA_semSignal(m_semScheduler[i]);
+		OSA_semDelete(m_semScheduler[i]);
+		delete m_semScheduler[i];
+		m_semScheduler[i] = NULL;
+	}
 	sync422_spi_destory(0);
 
 	OSA_mutexDelete(&m_mutex);

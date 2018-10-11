@@ -39,7 +39,12 @@ typedef struct _enctran_init_param
 class CEncTrans
 {
 public:
-	CEncTrans(){memset(m_enable, 0, sizeof(m_enable));};
+	CEncTrans(){
+		memset(m_enable, 0, sizeof(m_enable));
+		memset(m_semScheduler, 0, sizeof(m_semScheduler));
+		memset(m_bufQue, 0, sizeof(m_bufQue));
+		memset(m_bufSem, 0, sizeof(m_bufSem));
+	};
 	~CEncTrans(){};
 	int create();
 	int destroy();
@@ -56,18 +61,22 @@ public:
 	}CFG;
 
 	int dynamic_config(CEncTrans::CFG type, int iPrm, void* pPrm);
-	void process(Mat frame, int chId, int pixFmt = V4L2_PIX_FMT_YUV420M);
+	void pushData(Mat frame, int chId, int pixFmt = V4L2_PIX_FMT_YUV420M);
+	void scheduler(int chId);
 
 public:
 	ENCTRAN_InitPrm m_initPrm;
 	bool m_enable[ENT_CHN_MAX];
 	ENCTRAN_encPrm m_encPrm[ENT_CHN_MAX];
 	int m_curBitrate[ENT_CHN_MAX];
+	OSA_BufHndl *m_bufQue[ENT_CHN_MAX];
+	OSA_SemHndl *m_bufSem[ENT_CHN_MAX];
 	int m_curTransLevel;
 	int m_curTransMask;
 
 protected:
 	OSA_MutexHndl m_mutex;
+	OSA_SemHndl *m_semScheduler[ENT_CHN_MAX];
 
 private:
 };

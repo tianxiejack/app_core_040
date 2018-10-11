@@ -288,7 +288,7 @@ void processFrame_process(int cap_chid,unsigned char *src, struct v4l2_buffer ca
 			cuConvertEnh_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
 		else
 			cuConvert_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
-		enctran.process(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
+		enctran.pushData(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
 	}
 	else if(cap_chid==HOT_DEV_ID)
 	{
@@ -299,7 +299,7 @@ void processFrame_process(int cap_chid,unsigned char *src, struct v4l2_buffer ca
 			cuConvertEnh_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
 		else
 			cuConvert_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
-		enctran.process(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
+		enctran.pushData(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
 	}
 
 	if(cap_chid == curChannelFlag && imgQ[cap_chid] != NULL)

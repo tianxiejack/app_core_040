@@ -295,6 +295,10 @@ src/core/encTrans.o : ../src/core/encTrans.cpp \
     ../src/cr_osa/inc/osa_debug.h \
     ../include/StlGlDefines.h \
     ../src/encTrans/gst_capture.h \
+    ../src/cr_osa/inc/osa_buf.h \
+    ../src/cr_osa/inc/osa_que.h \
+    ../src/cr_osa/inc/osa_mutex.h \
+    ../src/cr_osa/inc/osa_sem.h \
     ../src/core/cuda_convert.cuh \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_runtime.h \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/host_config.h \
@@ -311,11 +315,7 @@ src/core/encTrans.o : ../src/core/encTrans.cpp \
     /usr/include/getopt.h \
     /usr/include/aarch64-linux-gnu/bits/unistd.h \
     ../src/core/encTrans.hpp \
-    ../src/cr_osa/inc/osa_sem.h \
     ../src/cr_osa/inc/osa_thr.h \
-    ../src/cr_osa/inc/osa_buf.h \
-    ../src/cr_osa/inc/osa_que.h \
-    ../src/cr_osa/inc/osa_mutex.h \
     /usr/include/linux/videodev2.h \
     /usr/include/linux/ioctl.h \
     /usr/include/aarch64-linux-gnu/asm/ioctl.h \

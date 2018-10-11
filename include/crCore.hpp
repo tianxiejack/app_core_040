@@ -57,6 +57,7 @@ typedef struct _core_1001_stats{
 
 typedef struct _core_1001_init{
 	OSA_SemHndl *notify;
+	bool bEncoder;
 	bool bRender;
 	bool bHideOSD;
 }CORE1001_INIT_PARAM;

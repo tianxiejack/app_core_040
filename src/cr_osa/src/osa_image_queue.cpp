@@ -21,12 +21,12 @@ int cuMap(OSA_BufInfo* info)
 		OSA_assert((info->flags & IMG_INF_FLAG_PBOMAP) == 0);
 		cudaError_t ret;
 		size_t size;
-		ret = cudaGraphicsMapResources(1, &info->resource, 0);
+		ret = cudaGraphicsMapResources(1, (struct cudaGraphicsResource **)&info->resource, 0);
 		if (ret != cudaSuccess) {
 				fprintf(stderr, "cudaGraphicsMapResources failed line[%d] errno = %d!", __LINE__, (int)cudaGetLastError());
 				OSA_assert(0);
 		}
-		ret = cudaGraphicsResourceGetMappedPointer(&info->physAddr, &size,  info->resource);
+		ret = cudaGraphicsResourceGetMappedPointer(&info->physAddr, &size, (struct cudaGraphicsResource *)info->resource);
 		if (ret != cudaSuccess) {
 				fprintf(stderr, "cudaGraphicsResourceGetMappedPointer failed line[%d] errno = %d!", __LINE__, (int)cudaGetLastError());
 				OSA_assert(0);
@@ -44,7 +44,7 @@ int cuUnmap(OSA_BufInfo* info)
 		OSA_assert(info->resource != NULL);
 		OSA_assert((info->flags & IMG_INF_FLAG_PBOMAP) == IMG_INF_FLAG_PBOMAP);
 		cudaError_t ret;
-		ret = cudaGraphicsUnmapResources(1, &info->resource, 0);
+		ret = cudaGraphicsUnmapResources(1, (struct cudaGraphicsResource **)&info->resource, 0);
 		if (ret != cudaSuccess) {
 				fprintf(stderr, "cudaGraphicsUnmapResources failed line[%d] errno = %d!", __LINE__, (int)cudaGetLastError());
 				OSA_assert(0);
@@ -117,7 +117,7 @@ int image_queue_create(OSA_BufHndl *hndl, int nBuffers, size_t buffsize, int mem
 		hndl->bufInfo[i].memtype = memtype;
 		hndl->bufInfo[i].pbo = pbos[i];
 		if(memtype == memtype_glpbo){
-			ret = cudaGraphicsGLRegisterBuffer(&hndl->bufInfo[i].resource, hndl->bufInfo[i].pbo, cudaGraphicsMapFlagsWriteDiscard);
+			ret = cudaGraphicsGLRegisterBuffer((struct cudaGraphicsResource **)&hndl->bufInfo[i].resource, hndl->bufInfo[i].pbo, cudaGraphicsMapFlagsWriteDiscard);
 			image_queue_getEmpty(hndl);
 		}
 		OSA_assert(ret == cudaSuccess);
@@ -148,7 +148,7 @@ int image_queue_delete(OSA_BufHndl *hndl)
 			cudaFree(hndl->bufInfo[i].physAddr);
 			break;
 		case memtype_glpbo:
-			cudaGraphicsUnregisterResource(hndl->bufInfo[i].resource);
+			cudaGraphicsUnregisterResource((struct cudaGraphicsResource *)hndl->bufInfo[i].resource);
 			glDeleteBuffers(1, &hndl->bufInfo[i].pbo);
 			break;
 		case memtype_null:

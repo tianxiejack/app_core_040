@@ -36,6 +36,7 @@ void processFrame_cap(int cap_chid,unsigned char *src, struct v4l2_buffer capInf
 	{
 		if(cap_chid==TV_DEV_ID)
 		{
+			//OSA_printf("%s ch%d %d", __func__, cap_chid, OSA_getCurTimeInMsec());
 			static int a = 0;
 			if(!a)
 			{
@@ -81,6 +82,7 @@ void processFrame_cap(int cap_chid,unsigned char *src, struct v4l2_buffer capInf
 		}
 		else if(cap_chid==HOT_DEV_ID)
 		{
+			//OSA_printf("%s ch%d %d", __func__, cap_chid, OSA_getCurTimeInMsec());
 			static int b = 0;
 			if(!b)
 			{

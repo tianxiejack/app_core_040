@@ -9,6 +9,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
+-include src/nvMedia/subdir.mk
 -include src/subdir.mk
 -include src/encTrans/subdir.mk
 -include src/cr_osa/src/subdir.mk
@@ -62,7 +63,7 @@ all: dss_xgs_040
 dss_xgs_040: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	/usr/local/cuda-8.0/bin/nvcc --cudart static -L../lib -Xlinker -rpath-link="/usr/lib/aarch64-linux-gnu/tegra" -L/usr/lib --relocatable-device-code=false -gencode arch=compute_50,code=compute_50 -gencode arch=compute_50,code=sm_50 -m64 -ccbin aarch64-linux-gnu-g++ -link -o  "dss_xgs_040" $(OBJS) $(USER_OBJS) $(LIBS)
+	/usr/local/cuda-8.0/bin/nvcc --cudart static -L/usr/lib -L/usr/lib/aarch64-linux-gnu --relocatable-device-code=false -gencode arch=compute_50,code=compute_50 -gencode arch=compute_50,code=sm_50 -m64 -ccbin aarch64-linux-gnu-g++ -link -o  "dss_xgs_040" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

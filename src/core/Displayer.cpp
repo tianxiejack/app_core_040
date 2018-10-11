@@ -668,9 +668,14 @@ void CRender::gl_display(void)
 
 	OSA_mutexLock(&m_mutex);
 #if (!RENDMOD_TIME_ON)
-	Uint32 wm = (m_interval - (tstart - tend))*0.000001;
-	if(m_waitSync && wm>10)
-		OSA_waitMsecs(wm-10);
+	double wms = (m_interval - (tstart - tend))*0.000001;
+	if(m_waitSync && wms>5.0){
+		//OSA_waitMsecs(wms-5.0);
+		struct timeval timeout;
+		timeout.tv_sec = 0;
+		timeout.tv_usec = (wms-5.0)*1000.0;
+		select( 0, NULL, NULL, NULL, &timeout );
+	}
 #endif
 
 	for(winId=0; winId<m_renderCount; winId++)

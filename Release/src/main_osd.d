@@ -279,6 +279,7 @@ src/main_osd.o : ../src/main_osd.cpp \
     ../src/cr_osa/inc/osa_mutex.h \
     ../src/main.h \
     ../src/encTrans/gst_capture.h \
+    ../src/cr_osa/inc/osa_sem.h \
     ../src/core/cuda_convert.cuh \
     ../src/encTrans/sync422_trans.h \
     /usr/include/unistd.h \
@@ -289,5 +290,4 @@ src/main_osd.o : ../src/main_osd.cpp \
     /usr/include/aarch64-linux-gnu/bits/unistd.h \
     ../src/core/Displayer.hpp \
     ../src/cr_osa/inc/osa_thr.h \
-    ../src/cr_osa/inc/osa_sem.h \
     ../src/cr_osa/inc/osa_image_queue.h

@@ -205,11 +205,13 @@ static int setOSDColor(int value)
  *
  */
 
-static OSA_BufHndl *imgQ[QUE_CHID_COUNT] = {NULL,};
+static OSA_BufHndl *imgQRender[QUE_CHID_COUNT] = {NULL,};
+static OSA_BufHndl *imgQEnc[QUE_CHID_COUNT] = {NULL,};
+static OSA_SemHndl *imgQEncSem[QUE_CHID_COUNT] = {NULL,};
 static unsigned char *memsI420[QUE_CHID_COUNT] = {NULL,};
 static cv::Mat imgOsd[QUE_CHID_COUNT];
 
-static int init(OSA_SemHndl *notify = NULL, bool bRender = false, bool bHideOSD = false)
+static int init(OSA_SemHndl *notify = NULL, bool bEncoder = false, bool bRender = false, bool bHideOSD = false)
 {
 	int ret = OSA_SOK;
 	cuConvertInit(QUE_CHID_COUNT);
@@ -223,30 +225,38 @@ static int init(OSA_SemHndl *notify = NULL, bool bRender = false, bool bHideOSD 
 	imgOsd[HOT_DEV_ID] = Mat(HOT_HEIGHT, HOT_WIDTH, CV_8UC1, mem);
 	memset(imgOsd[HOT_DEV_ID].data, 0, imgOsd[HOT_DEV_ID].cols*imgOsd[HOT_DEV_ID].rows*imgOsd[HOT_DEV_ID].channels());
 
-	ENCTRAN_InitPrm enctranInit;
-	memset(&enctranInit, 0, sizeof(enctranInit));
-	enctranInit.iTransLevel = 1;
-	enctranInit.defaultEnable[0] = true;
-	enctranInit.defaultEnable[1] = true;
-	enctranInit.encPrm[0].bitrate = BITRATE_4M;
-	enctranInit.encPrm[0].minQP = MIN_QP_4M;
-	enctranInit.encPrm[0].maxQP = MAX_QP;
-	enctranInit.encPrm[0].minQI = MIN_I_4M;
-	enctranInit.encPrm[0].maxQI = MAX_I;
-	enctranInit.encPrm[0].minQB = -1;
-	enctranInit.encPrm[0].maxQB = -1;
-	enctranInit.encPrm[1].bitrate = BITRATE_4M;
-	enctranInit.encPrm[1].minQP = MIN_QP_4M;
-	enctranInit.encPrm[1].maxQP = MAX_QP;
-	enctranInit.encPrm[1].minQI = MIN_I_4M;
-	enctranInit.encPrm[1].maxQI = MAX_I;
-	enctranInit.encPrm[1].minQB = -1;
-	enctranInit.encPrm[1].maxQB = -1;
-	enctran.create();
-	enctran.init(&enctranInit);
-	enctran.run();
+	if(bEncoder)
+	{
+		ENCTRAN_InitPrm enctranInit;
+		memset(&enctranInit, 0, sizeof(enctranInit));
+		enctranInit.iTransLevel = 1;
+		enctranInit.defaultEnable[0] = true;
+		enctranInit.defaultEnable[1] = true;
+		enctranInit.encPrm[0].bitrate = BITRATE_4M;
+		enctranInit.encPrm[0].minQP = MIN_QP_4M;
+		enctranInit.encPrm[0].maxQP = MAX_QP;
+		enctranInit.encPrm[0].minQI = MIN_I_4M;
+		enctranInit.encPrm[0].maxQI = MAX_I;
+		enctranInit.encPrm[0].minQB = -1;
+		enctranInit.encPrm[0].maxQB = -1;
+		enctranInit.encPrm[1].bitrate = BITRATE_4M;
+		enctranInit.encPrm[1].minQP = MIN_QP_4M;
+		enctranInit.encPrm[1].maxQP = MAX_QP;
+		enctranInit.encPrm[1].minQI = MIN_I_4M;
+		enctranInit.encPrm[1].maxQI = MAX_I;
+		enctranInit.encPrm[1].minQB = -1;
+		enctranInit.encPrm[1].maxQB = -1;
+		enctran.create();
+		enctran.init(&enctranInit);
+		enctran.run();
+		imgQEnc[0] = enctran.m_bufQue[0];
+		imgQEnc[1] = enctran.m_bufQue[1];
+		imgQEncSem[0] = enctran.m_bufSem[0];
+		imgQEncSem[1] = enctran.m_bufSem[1];
+	}
 
-	if(bRender){
+	if(bRender)
+	{
 		DS_InitPrm dsInit;
 		memset(&dsInit, 0, sizeof(dsInit));
 		dsInit.bFullScreen = true;
@@ -264,8 +274,8 @@ static int init(OSA_SemHndl *notify = NULL, bool bRender = false, bool bHideOSD 
 		render->create();
 		render->init(&dsInit);
 		render->run();
-		imgQ[0] = &render->m_bufQue[0];
-		imgQ[1] = &render->m_bufQue[1];
+		imgQRender[0] = &render->m_bufQue[0];
+		imgQRender[1] = &render->m_bufQue[1];
 	}
 
 	mmtd = new CMMTDProcess();
@@ -309,7 +319,7 @@ static int uninit()
 	cudaFreeHost(memsI420[HOT_DEV_ID]);
 	cuConvertUinit();
 }
-
+#define ZeroCpy	(0)
 static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer capInfo, int format)
 {
 	Mat img;
@@ -319,10 +329,28 @@ static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer cap
 	//struct timespec ns0;
 	//clock_gettime(CLOCK_MONOTONIC_RAW, &ns0);
 	Mat i420;
+	OSA_BufInfo* info = NULL;
+	unsigned char *mem = NULL;
+
+	if(ZeroCpy){
+		if(imgQEnc[cap_chid] != NULL)
+			info = image_queue_getEmpty(imgQEnc[cap_chid]);
+	}
+	if(info != NULL){
+		info->chId = cap_chid;
+		info->timestampCap = (uint64)capInfo.timestamp.tv_sec*1000000000ul
+				+ (uint64)capInfo.timestamp.tv_usec*1000ul;
+		info->timestamp = (uint64_t)getTickCount();
+		mem = (unsigned char *)info->virtAddr;
+	}
+	if(mem == NULL)
+		mem = memsI420[cap_chid];
 	if(cap_chid==TV_DEV_ID)
 	{
+		//OSA_printf("%s ch%d %d", __func__, cap_chid, OSA_getCurTimeInMsec());
+		enctran.scheduler(cap_chid);
 		img	= Mat(TV_HEIGHT,TV_WIDTH,CV_8UC2, src);
-		i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, memsI420[cap_chid]);
+		i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, mem);
 		proc->process(cap_chid, curFovIdFlag[cap_chid], ezoomxFlag[cap_chid], img);
 		if(enableOSDFlag){
 			if(enableEnhFlag[cap_chid])
@@ -335,12 +363,15 @@ static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer cap
 			else
 				cuConvert_async(cap_chid, img, i420, ezoomxFlag[cap_chid]);
 		}
-		enctran.process(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
+		if(!ZeroCpy)
+			enctran.pushData(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
 	}
 	else if(cap_chid==HOT_DEV_ID)
 	{
+		//OSA_printf("%s ch%d %d", __func__, cap_chid, OSA_getCurTimeInMsec());
+		enctran.scheduler(cap_chid);
 		img = Mat(HOT_HEIGHT,HOT_WIDTH,CV_8UC1,src);
-		i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, memsI420[cap_chid]);
+		i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, mem);
 		proc->process(cap_chid, curFovIdFlag[cap_chid], ezoomxFlag[cap_chid], img);
 		if(enableOSDFlag){
 			if(enableEnhFlag[cap_chid])
@@ -353,13 +384,23 @@ static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer cap
 			else
 				cuConvert_async(cap_chid, img, i420, ezoomxFlag[cap_chid]);
 		}
-		enctran.process(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
+		if(!ZeroCpy)
+			enctran.pushData(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
 	}
 
-	if(cap_chid == curChannelFlag && imgQ[cap_chid] != NULL)
+	if(info != NULL){
+		info->channels = i420.channels();
+		info->width = i420.cols;
+		info->height = i420.rows;
+		info->format = V4L2_PIX_FMT_YUV420M;
+		image_queue_putFull(imgQEnc[cap_chid], info);
+		OSA_semSignal(imgQEncSem[cap_chid]);
+	}
+
+	if(cap_chid == curChannelFlag && imgQRender[cap_chid] != NULL)
 	{
 		Mat bgr;
-		OSA_BufInfo* info = image_queue_getEmpty(imgQ[cap_chid]);
+		info = image_queue_getEmpty(imgQRender[cap_chid]);
 		if(info != NULL)
 		{
 			bgr = Mat(img.rows,img.cols,CV_8UC3, info->physAddr);
@@ -368,10 +409,11 @@ static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer cap
 			info->channels = bgr.channels();
 			info->width = bgr.cols;
 			info->height = bgr.rows;
+			info->format = V4L2_PIX_FMT_BGR24;
 			info->timestampCap = (uint64)capInfo.timestamp.tv_sec*1000000000ul
 					+ (uint64)capInfo.timestamp.tv_usec*1000ul;
 			info->timestamp = (uint64_t)getTickCount();
-			image_queue_putFull(imgQ[cap_chid], info);
+			image_queue_putFull(imgQRender[cap_chid], info);
 		}
 	}
 
@@ -413,7 +455,7 @@ public:
 		CORE1001_INIT_PARAM *initParam = (CORE1001_INIT_PARAM*)pParam;
 		m_notifySem = initParam->notify;
 		OSA_semCreate(&m_updateSem, 1, 0);
-		int ret = cr_local::init(&m_updateSem, initParam->bRender, initParam->bHideOSD);
+		int ret = cr_local::init(&m_updateSem, initParam->bEncoder, initParam->bRender, initParam->bHideOSD);
 		memset(&m_stats, 0, sizeof(m_stats));
 		update();
 		for(int chId=0; chId<QUE_CHID_COUNT; chId++)
@@ -440,69 +482,98 @@ public:
 	{
 		UTC_SIZE sz;
 		sz.width = acqSize.width; sz.height = acqSize.height;
-		return cr_local::setMainChId(chId, fovId, ndrop, sz);
+		int ret = cr_local::setMainChId(chId, fovId, ndrop, sz);
+		update();
+		return ret;
 	}
 	virtual int enableTrack(bool enable, cv::Size winSize, bool bFixSize)
 	{
 		UTC_SIZE sz;
 		sz.width = winSize.width; sz.height = winSize.height;
-		return cr_local::enableTrack(enable, sz, bFixSize);
+		int ret = cr_local::enableTrack(enable, sz, bFixSize);
+		update();
+		return ret;
 	}
 	virtual int enableTrack(bool enable, Rect2f winRect, bool bFixSize)
 	{
 		UTC_RECT_float rc;
 		rc.x = winRect.x; rc.y = winRect.y;
 		rc.width = winRect.width; rc.height = winRect.height;
-		return cr_local::enableTrack(enable, rc, bFixSize);
+		int ret = cr_local::enableTrack(enable, rc, bFixSize);
+		update();
+		return ret;
 	}
 	virtual int enableMMTD(bool enable, int nTarget)
 	{
-		return cr_local::enableMMTD(enable, nTarget);
+		int ret = cr_local::enableMMTD(enable, nTarget);
+		update();
+		return ret;
 	}
 	virtual int enableTrackByMMTD(int index, cv::Size *winSize, bool bFixSize)
 	{
-		return cr_local::enableTrackByMMTD(index, winSize, bFixSize);
+		int ret = cr_local::enableTrackByMMTD(index, winSize, bFixSize);
+		update();
+		return ret;
 	}
 	virtual int enableEnh(bool enable)
 	{
-		return cr_local::enableEnh(enable);
+		int ret = cr_local::enableEnh(enable);
+		update();
+		return ret;
 	}
 	virtual int enableOSD(bool enable)
 	{
-		return cr_local::enableOSD(enable);
+		int ret = cr_local::enableOSD(enable);
+		update();
+		return ret;
 	}
 	virtual int setAxisPos(cv::Point pos)
 	{
-		return cr_local::setAxisPos(pos);
+		int ret = cr_local::setAxisPos(pos);
+		update();
+		return ret;
 	}
 	virtual int saveAxisPos()
 	{
-		return cr_local::saveAxisPos();
+		int ret = cr_local::saveAxisPos();
+		update();
+		return ret;
 	}
 	virtual int setTrackPosRef(cv::Point2f ref)
 	{
-		return cr_local::setTrackPosRef(ref);
+		int ret = cr_local::setTrackPosRef(ref);
+		update();
+		return ret;
 	}
 	virtual int setTrackCoast(int nFrames)
 	{
-		return cr_local::setTrackCoast(nFrames);
+		int ret = cr_local::setTrackCoast(nFrames);
+		update();
+		return ret;
 	}
 	virtual int setEZoomx(int value)
 	{
-		return cr_local::setEZoomx(value);
+		int ret = cr_local::setEZoomx(value);
+		update();
+		return ret;
 	}
 	virtual int setOSDColor(int yuv)
 	{
-		return cr_local::setOSDColor(yuv);
+		int ret = cr_local::setOSDColor(yuv);
+		update();
+		return ret;
 	}
 	virtual int setEncTransLevel(int iLevel)
 	{
-		return cr_local::setEncTransLevel(iLevel);
+		int ret = cr_local::setEncTransLevel(iLevel);
+		update();
+		return ret;
 	}
 };
 unsigned int Core_1001::ID = COREID_1001;
 void Core_1001::update()
 {
+	//OSA_printf("%s %d: enter.", __func__, __LINE__);
 	m_stats.mainChId = cr_local::curChannelFlag;
 	m_stats.acqWinSize.width = cr_local::general->m_sizeAcqWin.width;
 	m_stats.acqWinSize.width = cr_local::general->m_sizeAcqWin.width;

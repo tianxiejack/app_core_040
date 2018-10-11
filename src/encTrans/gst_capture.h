@@ -2,6 +2,8 @@
 #define _GST_CAPTURE_H
 
 #include "StlGlDefines.h"
+#include "osa_buf.h"
+#include "osa_sem.h"
 
 typedef int (*SendDataCallback)   (int dtype, unsigned char *buf, int size);
 
@@ -52,6 +54,8 @@ typedef struct _recordHandle
 	CAPTURE_SRC capture_src;
 	SendDataCallback sd_cb;
 	int Q_PIB[ENC_QP_PARAMS_COUNT];
+	OSA_BufHndl *pushQueue;
+	OSA_SemHndl *pushSem;
 }RecordHandle;
 
 typedef struct _gstCapture_data
@@ -67,14 +71,16 @@ typedef struct _gstCapture_data
 	char* ip_addr;
 	SendDataCallback sd_cb;
 	int Q_PIB[ENC_QP_PARAMS_COUNT];
+	void *notify;
 }GstCapture_data;
 
 extern RecordHandle * record_handle[QUE_CHID_COUNT];
 
+void initGstCap(void *notifys[] = NULL);
+void UninitGstCap();
+
 RecordHandle * gstCaptureInit( GstCapture_data gstCapture_data );
 
-void initGstCap();
-void UninitGstCap();
 int gstCapturePushData(RecordHandle *handle, char *pbuffer , int datasize);
 
 int gstCaptureUninit(RecordHandle *handle);

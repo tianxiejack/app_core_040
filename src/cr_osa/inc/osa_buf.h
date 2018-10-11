@@ -19,10 +19,12 @@ typedef struct {
   uint64_t	timestampCap;//ns
   uint64_t	timestamp;//ns
   uint32_t  pbo;
-  struct cudaGraphicsResource *resource;
+  //struct cudaGraphicsResource *resource;
+  void      *resource;
   int 		width;
   int 		height;
   int       channels;
+  int       format;
   int 		size;
   int       flags;
   void 		*physAddr;

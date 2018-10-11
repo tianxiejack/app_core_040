@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "gst_capture.h"
 #include"sync422_trans.h"
 
@@ -7,8 +9,9 @@ RecordHandle * record_handle[QUE_CHID_COUNT];
 
 #define PORT_RTP 7000
 static char strFormat[16] = "I420";//"YUY2"//"GRAY8"
-void initGstCap()
+void initGstCap(void *notifys[])
 {
+	memset(gstCapture_data, 0, sizeof(gstCapture_data));
 	gstCapture_data[TV_DEV_ID].width = TV_WIDTH;
 	gstCapture_data[TV_DEV_ID].height = TV_HEIGHT;
 	gstCapture_data[TV_DEV_ID].framerate = 30;
@@ -22,9 +25,10 @@ void initGstCap()
 	gstCapture_data[TV_DEV_ID].sd_cb=sync422_ontime_video;
 	for(int i=0;i<ENC_QP_PARAMS_COUNT;i++)
 		gstCapture_data[TV_DEV_ID].Q_PIB[i]=-1;
+	if(notifys!=NULL)
+		gstCapture_data[TV_DEV_ID].notify = notifys[TV_DEV_ID];
 
 	record_handle[TV_DEV_ID] = gstCaptureInit(gstCapture_data[TV_DEV_ID]);
-
 
 	gstCapture_data[HOT_DEV_ID].width = HOT_WIDTH;
 	gstCapture_data[HOT_DEV_ID].height = HOT_HEIGHT;
@@ -37,9 +41,10 @@ void initGstCap()
 	//gstCapture_data[HOT_DEV_ID].format = "GRAY8";
 	gstCapture_data[HOT_DEV_ID].ip_addr =TARGET_IP;
 	gstCapture_data[HOT_DEV_ID].sd_cb=sync422_ontime_video;
-
 	for(int i=0;i<ENC_QP_PARAMS_COUNT;i++)
 		gstCapture_data[HOT_DEV_ID].Q_PIB[i]=-1;
+	if(notifys!=NULL)
+		gstCapture_data[HOT_DEV_ID].notify = notifys[HOT_DEV_ID];
 
 	record_handle[HOT_DEV_ID] = gstCaptureInit(gstCapture_data[HOT_DEV_ID]);
 

@@ -276,6 +276,7 @@ src/main_gst.o : ../src/main_gst.cpp \
     ../src/cr_osa/inc/osa_mutex.h \
     ../src/main.h \
     ../src/encTrans/gst_capture.h \
+    ../src/cr_osa/inc/osa_sem.h \
     ../src/core/cuda_convert.cuh \
     ../src/encTrans/sync422_trans.h \
     /usr/include/unistd.h \

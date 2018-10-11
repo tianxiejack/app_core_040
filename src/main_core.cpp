@@ -357,6 +357,7 @@ int main_core(int argc, char **argv)
 	CORE1001_INIT_PARAM initParam;
 	memset(&initParam, 0, sizeof(initParam));
 	initParam.bRender = bRender;
+	initParam.bEncoder = true;
 	core->init(&initParam, sizeof(initParam));
 	start_thread(thrdhndl_timer, &bLoop);
 	if(bRender){

@@ -827,10 +827,13 @@ int sync422_ontime_video(int dtype, unsigned char *buf, int len)
 		int64 tmpStamp = cv::getTickCount();
 		if(pObj->stampUsr != 0ll)
 		{
-			printf("dtype %x len = %d intv = %.3f\n", dtype, len, (tmpStamp - pObj->stampUsr)*0.000001);
+			double dms = (tmpStamp - pObj->stampUsr)*0.000001;
+			if(dms<31 || dms > 35)
+				printf("dtype %x len = %d intv = %.3f\n", dtype, len, dms);
 		}
 		pObj->stampUsr = tmpStamp;
 	}
+	//return 0;
 #if PRESSUREMODE
 	iRtn = OSA_bufGetEmpty(&pObj->ringQue, &bufId, OSA_TIMEOUT_FOREVER/*OSA_TIMEOUT_NONE*/);
 #else
