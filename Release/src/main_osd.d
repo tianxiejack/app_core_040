@@ -278,16 +278,16 @@ src/main_osd.o : ../src/main_osd.cpp \
     ../src/cr_osa/inc/osa_que.h \
     ../src/cr_osa/inc/osa_mutex.h \
     ../src/main.h \
-    ../src/encTrans/gst_capture.h \
+    ../include/gst_capture.h \
     ../src/cr_osa/inc/osa_sem.h \
-    ../src/core/cuda_convert.cuh \
-    ../src/encTrans/sync422_trans.h \
+    ../include/cuda_convert.cuh \
+    ../include/sync422_trans.h \
     /usr/include/unistd.h \
     /usr/include/aarch64-linux-gnu/bits/posix_opt.h \
     /usr/include/aarch64-linux-gnu/bits/environments.h \
     /usr/include/aarch64-linux-gnu/bits/confname.h \
     /usr/include/getopt.h \
     /usr/include/aarch64-linux-gnu/bits/unistd.h \
-    ../src/core/Displayer.hpp \
+    ../include/Displayer.hpp \
     ../src/cr_osa/inc/osa_thr.h \
     ../src/cr_osa/inc/osa_image_queue.h

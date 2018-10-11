@@ -271,4 +271,57 @@ src/main_core.o : ../src/main_core.cpp \
     /usr/include/aarch64-linux-gnu/sys/user.h \
     /usr/include/aarch64-linux-gnu/bits/sigthread.h \
     ../src/cr_osa/inc/osa_debug.h \
-    ../src/cr_osa/inc/osa_sem.h
+    ../src/cr_osa/inc/osa_sem.h \
+    ../src/capture/ChosenCaptureGroup.h \
+    ../src/capture/CaptureGroup.h \
+    ../include/StlGlDefines.h \
+    ../src/capture/Camera.h \
+    /usr/include/opencv2/opencv.hpp \
+    /usr/include/opencv2/opencv_modules.hpp \
+    /usr/include/opencv2/photo/photo.hpp \
+    /usr/include/opencv2/photo/photo_c.h \
+    /usr/include/opencv2/video/video.hpp \
+    /usr/include/opencv2/video/background_segm.hpp \
+    /usr/include/c++/5/list \
+    /usr/include/c++/5/bits/stl_list.h \
+    /usr/include/c++/5/bits/list.tcc \
+    /usr/include/opencv2/ml/ml.hpp \
+    /usr/include/opencv2/highgui/highgui_c.h \
+    /usr/include/opencv2/highgui/highgui.hpp \
+    /usr/include/opencv2/contrib/contrib.hpp \
+    /usr/include/opencv2/contrib/retina.hpp \
+    /usr/include/c++/5/valarray \
+    /usr/include/c++/5/bits/valarray_array.h \
+    /usr/include/c++/5/bits/valarray_array.tcc \
+    /usr/include/c++/5/bits/valarray_before.h \
+    /usr/include/c++/5/bits/slice_array.h \
+    /usr/include/c++/5/bits/valarray_after.h \
+    /usr/include/c++/5/bits/gslice.h \
+    /usr/include/c++/5/bits/gslice_array.h \
+    /usr/include/c++/5/bits/mask_array.h \
+    /usr/include/c++/5/bits/indirect_array.h \
+    /usr/include/opencv2/contrib/openfabmap.hpp \
+    /usr/include/c++/5/memory \
+    /usr/include/c++/5/bits/stl_raw_storage_iter.h \
+    /usr/include/c++/5/backward/auto_ptr.h \
+    ../src/capture/HDV4lcap.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/driver_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/host_defines.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_runtime.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/host_config.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/builtin_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/device_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/surface_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/texture_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/vector_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/library_types.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/channel_descriptor.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_runtime_api.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_device_runtime_api.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/driver_functions.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/vector_functions.h \
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/vector_functions.hpp \
+    ../src/cr_osa/inc/osa_buf.h \
+    ../src/cr_osa/inc/osa_que.h \
+    ../src/cr_osa/inc/osa_mutex.h

@@ -39,7 +39,7 @@ typedef struct _core_1001_chn_stats{
 	cv::Point2f axis;
 	bool enableEnh;
 	int iEZoomx;
-	bool enableEncTrans;
+	bool enableEncoder;
 }CORE1001_CHN_STATS;
 
 typedef struct _core_1001_stats{
@@ -72,6 +72,7 @@ public:
 	virtual int enableTrackByMMTD(int index, cv::Size *winSize = NULL, bool bFixSize = false) = 0;
 	virtual int enableEnh(bool enable) = 0;
 	virtual int enableOSD(bool enable) = 0;
+	virtual int enableEncoder(int chId, bool enable) = 0;
 	virtual int setAxisPos(cv::Point pos) = 0;
 	virtual int saveAxisPos() = 0;
 	virtual int setTrackPosRef(cv::Point2f ref) = 0;

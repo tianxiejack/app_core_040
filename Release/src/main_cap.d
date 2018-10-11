@@ -277,9 +277,9 @@ src/main_cap.o : ../src/main_cap.cpp \
     /usr/include/aarch64-linux-gnu/bits/stdio2.h \
     ../src/cr_osa/inc/osa_que.h \
     ../src/cr_osa/inc/osa_mutex.h \
-    ../src/core/Displayer.hpp \
+    ../include/Displayer.hpp \
     ../src/cr_osa/inc/osa_thr.h \
     ../src/cr_osa/inc/osa_sem.h \
     ../src/main.h \
-    ../src/core/cuda_convert.cuh \
+    ../include/cuda_convert.cuh \
     ../src/cr_osa/inc/osa_image_queue.h

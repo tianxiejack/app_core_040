@@ -301,8 +301,8 @@ src/capture/HDV4lcap.o : ../src/capture/HDV4lcap.cpp \
     /usr/include/aarch64-linux-gnu/bits/ioctl-types.h \
     /usr/include/aarch64-linux-gnu/sys/ttydefaults.h \
     ../src/capture/thread.h \
+    ../src/main.h \
     ../src/cr_osa/inc/osa_sem.h \
     /usr/include/malloc.h \
     /usr/lib/gcc/aarch64-linux-gnu/5/include/omp.h \
-    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_gl_interop.h \
-    ../src/main.h
+    /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_gl_interop.h

@@ -137,6 +137,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="enh"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crgst"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="v4l2"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crcore"/>
 								</option>
 								<option id="nvcc.linker.option.paths.2055824705" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/lib"/>

@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include "thread.h"
 #include "crCore.hpp"
+#include "ChosenCaptureGroup.h"
 
 #define WHITECOLOR 		0x008080FF
 #define YELLOWCOLOR 	0x009110D2
@@ -127,6 +128,7 @@ static void keyboard_event(unsigned char key, int x, int y)
 			" [h] Force Track To Coast               \n"
 			" [i][k][j][l] Refine Track Pos          \n"
 			" [m] Setup Axis                         \n"
+			" [n] Start/Pause Encoder transfer       \n"
 			" [u] Change EncTrans level (0/1/2)      \n"
 			" [1].[5] Enable Track By MMTD           \n"
 			" [esc][q]Quit                           \n"
@@ -246,6 +248,11 @@ static void keyboard_event(unsigned char key, int x, int y)
 		printf("%s",strMenus[iMenu]);
 		iMenu = 1;
 		break;
+	case 'n':
+		static bool encEnable[2] = {true, true};
+		encEnable[chId] ^=1;
+		core->enableEncoder(chId, encEnable[chId]);
+		break;
 	case 's':
 		if(iMenu == 1)
 			core->saveAxisPos();
@@ -360,6 +367,11 @@ int main_core(int argc, char **argv)
 	initParam.bEncoder = true;
 	core->init(&initParam, sizeof(initParam));
 	start_thread(thrdhndl_timer, &bLoop);
+
+	ChosenCaptureGroup *grop[2];
+	grop[0] = ChosenCaptureGroup::GetTVInstance();
+	grop[1] = ChosenCaptureGroup::GetHOTInstance();
+
 	if(bRender){
 		start_thread(thrdhndl_keyevent, &bRender);
 		glutKeyboardFunc(keyboard_event);

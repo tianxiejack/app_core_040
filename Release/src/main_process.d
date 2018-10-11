@@ -39,8 +39,8 @@ src/main_process.o : ../src/main_process.cpp \
     /usr/include/aarch64-linux-gnu/bits/stdlib.h \
     /usr/include/GL/freeglut_ext.h \
     /usr/lib/gcc/aarch64-linux-gnu/5/include/stdarg.h \
-    ../src/core/mmtdProcess.hpp \
-    ../src/core/processBase.hpp \
+    ../include/mmtdProcess.hpp \
+    ../include/processBase.hpp \
     /usr/include/opencv2/core/core.hpp \
     /usr/include/opencv2/core/types_c.h \
     /usr/include/assert.h \
@@ -290,12 +290,12 @@ src/main_process.o : ../src/main_process.cpp \
     ../src/cr_osa/inc/osa_mutex.h \
     ../src/cr_osa/inc/osa_sem.h \
     ../src/cr_osa/inc/osa_msgq.h \
-    ../src/core/MMTD.h \
-    ../src/core/GeneralProcess.hpp \
-    ../src/core/trackerProcess.hpp \
-    ../src/core/UtcTrack.h \
-    ../src/core/PCTracker.h \
-    ../src/core/Displayer.hpp \
+    ../include/MMTD.h \
+    ../include/GeneralProcess.hpp \
+    ../include/trackerProcess.hpp \
+    ../include/UtcTrack.h \
+    ../include/PCTracker.h \
+    ../include/Displayer.hpp \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda.h \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/cuda_runtime_api.h \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/host_defines.h \
@@ -327,6 +327,6 @@ src/main_process.o : ../src/main_process.cpp \
     /usr/include/asm-generic/ioctl.h \
     /usr/include/linux/v4l2-common.h \
     /usr/include/linux/v4l2-controls.h \
-    ../src/core/encTrans.hpp \
+    ../include/encTrans.hpp \
     ../src/cr_osa/inc/osa_image_queue.h \
-    ../src/core/cuda_convert.cuh
+    ../include/cuda_convert.cuh

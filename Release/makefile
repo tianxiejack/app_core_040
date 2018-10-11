@@ -9,11 +9,8 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include src/nvMedia/subdir.mk
 -include src/subdir.mk
--include src/encTrans/subdir.mk
 -include src/cr_osa/src/subdir.mk
--include src/core/subdir.mk
 -include src/capture/subdir.mk
 
 OS_SUFFIX := $(subst Linux,linux,$(subst Darwin/x86_64,darwin,$(shell uname -s)/$(shell uname -m)))

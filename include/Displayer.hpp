@@ -117,6 +117,7 @@ public:
 protected:
 	DS_InitPrm m_initPrm;
 	DS_Render m_renders[DS_RENDER_MAX];
+	int m_curMap[DS_RENDER_MAX];
 	int m_renderCount;
 	int initRender(bool bInitBind = true);
 	void uninitRender();

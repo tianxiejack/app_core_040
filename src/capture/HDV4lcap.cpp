@@ -13,11 +13,12 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <linux/videodev2.h>
-#include<opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 #include "StlGlDefines.h"
 #include "thread.h"
 #include <osa_buf.h>
-#include"StlGlDefines.h"
+#include "StlGlDefines.h"
+#include "main.h"
 #include <osa_sem.h>
 #if ARM_NEON_ENABLE
 #include"yuv2rgb.h"
@@ -36,7 +37,6 @@
 #include <cuda.h>
 #include <cuda_gl_interop.h>
 #include <cuda_runtime_api.h>
-#include "main.h"
 #define MEMCPY memcpy
 
 #define INPUT_IMAGE_WIDTH 1920
