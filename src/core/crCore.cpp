@@ -320,6 +320,75 @@ static int uninit()
 	cuConvertUinit();
 }
 #define ZeroCpy	(0)
+static void encTranFrame(int chId, Mat img, struct v4l2_buffer bufInfo)
+{
+	Mat i420;
+	OSA_BufInfo* info = NULL;
+	unsigned char *mem = NULL;
+
+	enctran.scheduler(chId);
+
+	if(ZeroCpy){
+		if(imgQEnc[chId] != NULL)
+			info = image_queue_getEmpty(imgQEnc[chId]);
+	}
+	if(info != NULL){
+		info->chId = chId;
+		info->timestampCap = (uint64)bufInfo.timestamp.tv_sec*1000000000ul
+				+ (uint64)bufInfo.timestamp.tv_usec*1000ul;
+		info->timestamp = (uint64_t)getTickCount();
+		mem = (unsigned char *)info->virtAddr;
+	}
+	if(mem == NULL)
+		mem = memsI420[chId];
+	i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, mem);
+	if(enableOSDFlag){
+		if(enableEnhFlag[chId])
+			cuConvertEnh_async(chId, img, imgOsd[chId], i420, ezoomxFlag[chId], colorYUVFlag);
+		else
+			cuConvert_async(chId, img, imgOsd[chId], i420, ezoomxFlag[chId], colorYUVFlag);
+	}else{
+		if(enableEnhFlag[chId])
+			cuConvertEnh_async(chId, img, i420, ezoomxFlag[chId]);
+		else
+			cuConvert_async(chId, img, i420, ezoomxFlag[chId]);
+	}
+	if(!ZeroCpy)
+		enctran.pushData(i420, chId, V4L2_PIX_FMT_YUV420M);
+
+	if(info != NULL){
+		info->channels = i420.channels();
+		info->width = i420.cols;
+		info->height = i420.rows;
+		info->format = V4L2_PIX_FMT_YUV420M;
+		image_queue_putFull(imgQEnc[chId], info);
+		OSA_semSignal(imgQEncSem[chId]);
+	}
+}
+
+static void renderFrame(int chId, Mat img, struct v4l2_buffer bufInfo)
+{
+	if(chId == curChannelFlag && imgQRender[chId] != NULL)
+	{
+		Mat bgr;
+		OSA_BufInfo* info = image_queue_getEmpty(imgQRender[chId]);
+		if(info != NULL)
+		{
+			bgr = Mat(img.rows,img.cols,CV_8UC3, info->physAddr);
+			cuConvertConn_yuv2bgr_i420(chId, bgr, CUT_FLAG_devAlloc);
+			info->chId = chId;
+			info->channels = bgr.channels();
+			info->width = bgr.cols;
+			info->height = bgr.rows;
+			info->format = V4L2_PIX_FMT_BGR24;
+			info->timestampCap = (uint64)bufInfo.timestamp.tv_sec*1000000000ul
+					+ (uint64)bufInfo.timestamp.tv_usec*1000ul;
+			info->timestamp = (uint64_t)getTickCount();
+			image_queue_putFull(imgQRender[chId], info);
+		}
+	}
+}
+
 static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer capInfo, int format)
 {
 	Mat img;
@@ -328,94 +397,21 @@ static void processFrame(int cap_chid,unsigned char *src, struct v4l2_buffer cap
 		return;
 	//struct timespec ns0;
 	//clock_gettime(CLOCK_MONOTONIC_RAW, &ns0);
-	Mat i420;
-	OSA_BufInfo* info = NULL;
-	unsigned char *mem = NULL;
-
-	if(ZeroCpy){
-		if(imgQEnc[cap_chid] != NULL)
-			info = image_queue_getEmpty(imgQEnc[cap_chid]);
-	}
-	if(info != NULL){
-		info->chId = cap_chid;
-		info->timestampCap = (uint64)capInfo.timestamp.tv_sec*1000000000ul
-				+ (uint64)capInfo.timestamp.tv_usec*1000ul;
-		info->timestamp = (uint64_t)getTickCount();
-		mem = (unsigned char *)info->virtAddr;
-	}
-	if(mem == NULL)
-		mem = memsI420[cap_chid];
 	if(cap_chid==TV_DEV_ID)
 	{
 		//OSA_printf("%s ch%d %d", __func__, cap_chid, OSA_getCurTimeInMsec());
-		enctran.scheduler(cap_chid);
 		img	= Mat(TV_HEIGHT,TV_WIDTH,CV_8UC2, src);
-		i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, mem);
 		proc->process(cap_chid, curFovIdFlag[cap_chid], ezoomxFlag[cap_chid], img);
-		if(enableOSDFlag){
-			if(enableEnhFlag[cap_chid])
-				cuConvertEnh_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
-			else
-				cuConvert_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
-		}else{
-			if(enableEnhFlag[cap_chid])
-				cuConvertEnh_async(cap_chid, img, i420, ezoomxFlag[cap_chid]);
-			else
-				cuConvert_async(cap_chid, img, i420, ezoomxFlag[cap_chid]);
-		}
-		if(!ZeroCpy)
-			enctran.pushData(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
 	}
 	else if(cap_chid==HOT_DEV_ID)
 	{
 		//OSA_printf("%s ch%d %d", __func__, cap_chid, OSA_getCurTimeInMsec());
-		enctran.scheduler(cap_chid);
 		img = Mat(HOT_HEIGHT,HOT_WIDTH,CV_8UC1,src);
-		i420 = Mat((int)(img.rows+img.rows/2), img.cols, CV_8UC1, mem);
 		proc->process(cap_chid, curFovIdFlag[cap_chid], ezoomxFlag[cap_chid], img);
-		if(enableOSDFlag){
-			if(enableEnhFlag[cap_chid])
-				cuConvertEnh_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
-			else
-				cuConvert_async(cap_chid, img, imgOsd[cap_chid], i420, ezoomxFlag[cap_chid], colorYUVFlag);
-		}else{
-			if(enableEnhFlag[cap_chid])
-				cuConvertEnh_async(cap_chid, img, i420, ezoomxFlag[cap_chid]);
-			else
-				cuConvert_async(cap_chid, img, i420, ezoomxFlag[cap_chid]);
-		}
-		if(!ZeroCpy)
-			enctran.pushData(i420, cap_chid, V4L2_PIX_FMT_YUV420M);
 	}
 
-	if(info != NULL){
-		info->channels = i420.channels();
-		info->width = i420.cols;
-		info->height = i420.rows;
-		info->format = V4L2_PIX_FMT_YUV420M;
-		image_queue_putFull(imgQEnc[cap_chid], info);
-		OSA_semSignal(imgQEncSem[cap_chid]);
-	}
-
-	if(cap_chid == curChannelFlag && imgQRender[cap_chid] != NULL)
-	{
-		Mat bgr;
-		info = image_queue_getEmpty(imgQRender[cap_chid]);
-		if(info != NULL)
-		{
-			bgr = Mat(img.rows,img.cols,CV_8UC3, info->physAddr);
-			cuConvertConn_yuv2bgr_i420(cap_chid, bgr, CUT_FLAG_devAlloc);
-			info->chId = cap_chid;
-			info->channels = bgr.channels();
-			info->width = bgr.cols;
-			info->height = bgr.rows;
-			info->format = V4L2_PIX_FMT_BGR24;
-			info->timestampCap = (uint64)capInfo.timestamp.tv_sec*1000000000ul
-					+ (uint64)capInfo.timestamp.tv_usec*1000ul;
-			info->timestamp = (uint64_t)getTickCount();
-			image_queue_putFull(imgQRender[cap_chid], info);
-		}
-	}
+	encTranFrame(cap_chid, img, capInfo);
+	renderFrame(cap_chid, img, capInfo);
 
 	//struct timespec ns1;
 	//clock_gettime(CLOCK_MONOTONIC_RAW, &ns1);
@@ -602,19 +598,30 @@ void Core_1001::update()
 	}
 }
 
+static int rafcnt = 0;
+static ICore *coreRaf = NULL;
 ICore* ICore::Qury(int coreID)
 {
-	ICore *core = NULL;
+	if(coreRaf != NULL){
+		rafcnt ++;
+		return coreRaf;
+	}
 	if(Core_1001::ID == coreID){
-		core = new Core_1001;
+		coreRaf = new Core_1001;
+		rafcnt ++;
 	}
 
-	return core;
+	return coreRaf;
 }
 void ICore::Release(ICore* core)
 {
-	if(core != NULL)
-		delete core;
+	if(core != NULL && coreRaf != NULL && core == coreRaf){
+		rafcnt --;
+		if(rafcnt == 0){
+			delete coreRaf;
+			coreRaf = NULL;
+		}
+	}
 }
 
 
