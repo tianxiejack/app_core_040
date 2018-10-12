@@ -352,6 +352,18 @@ static void *thrdhndl_timer( void * p )
 	return NULL;
 }
 
+static int encParamTab_T18[][8] = {
+	//bitrate; minQP; maxQP;minQI;maxQI;minQB;maxQB;
+	{1400000,  41,    51,   41,   51,   -1,   -1, },//2M
+	{2800000,  38,    51,   38,   51,   -1,   -1, },//4M
+	{5600000,  34,    51,   34,   51,   -1,   -1, } //8M
+};
+static int encParamTab[][8] = {
+	//bitrate; minQP; maxQP;minQI;maxQI;minQB;maxQB;
+	{1400000,  -1,    -1,   -1,   -1,   -1,   -1, },//2M
+	{2800000,  -1,    -1,   -1,   -1,   -1,   -1, },//4M
+	{5600000,  -1,    -1,   -1,   -1,   -1,   -1, } //8M
+};
 int main_core(int argc, char **argv)
 {
 	bool bRender = false;
@@ -371,6 +383,9 @@ int main_core(int argc, char **argv)
 	initParam.chnInfo[HOT_DEV_ID].imgSize = cv::Size(HOT_WIDTH, HOT_HEIGHT);
 	initParam.chnInfo[HOT_DEV_ID].fps = HOT_FPS;
 	initParam.chnInfo[HOT_DEV_ID].format = V4L2_PIX_FMT_GREY;
+	initParam.encoderParamTab[0] = encParamTab[0];
+	initParam.encoderParamTab[1] = encParamTab[1];
+	initParam.encoderParamTab[2] = encParamTab[2];
 	initParam.bRender = bRender;
 	initParam.bEncoder = true;
 	core->init(&initParam, sizeof(initParam));
