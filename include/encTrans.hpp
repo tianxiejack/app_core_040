@@ -12,7 +12,7 @@
 #include "osa_buf.h"
 #include "osa_sem.h"
 #include "linux/videodev2.h"
-//#include "StlGlDefines.h"
+#include "gst_capture.h"
 
 using namespace std;
 using namespace cv;
@@ -21,7 +21,8 @@ using namespace cv;
 
 typedef struct _enctran_enc_param
 {
-	unsigned int bitrate;
+	int fps;
+	int bitrate;
 	int minQP;
 	int maxQP;
 	int minQI;
@@ -34,6 +35,8 @@ typedef struct _enctran_init_param
 	int iTransLevel;
 	bool defaultEnable[ENT_CHN_MAX];
 	ENCTRAN_encPrm encPrm[ENT_CHN_MAX];
+	cv::Size imgSize[ENT_CHN_MAX];
+	int nChannels;
 }ENCTRAN_InitPrm;
 
 class CEncTrans
@@ -44,6 +47,7 @@ public:
 		memset(m_semScheduler, 0, sizeof(m_semScheduler));
 		memset(m_bufQue, 0, sizeof(m_bufQue));
 		memset(m_bufSem, 0, sizeof(m_bufSem));
+		m_nChannels = 2;
 	};
 	~CEncTrans(){};
 	int create();
@@ -66,6 +70,7 @@ public:
 
 public:
 	ENCTRAN_InitPrm m_initPrm;
+	int m_nChannels;
 	bool m_enable[ENT_CHN_MAX];
 	ENCTRAN_encPrm m_encPrm[ENT_CHN_MAX];
 	int m_curBitrate[ENT_CHN_MAX];
@@ -77,8 +82,11 @@ public:
 protected:
 	OSA_MutexHndl m_mutex;
 	OSA_SemHndl *m_semScheduler[ENT_CHN_MAX];
-
+	GstCapture_data m_gstCapture_data[ENT_CHN_MAX];
+	RecordHandle * m_record_handle[ENT_CHN_MAX];
+	int createEncoder(int chId);
+	int deleteEncoder(int chId);
 private:
 };
 
-#endif /* DISPLAYER_HPP_ */
+#endif /* ENCTRANS_HPP_ */

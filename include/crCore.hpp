@@ -55,11 +55,19 @@ typedef struct _core_1001_stats{
 	CORE1001_CHN_STATS chn[CORE_CHN_MAX];
 }CORE1001_STATS;
 
+typedef struct _core_1001_chnInfo_init{
+	cv::Size imgSize;
+	int format;
+	int fps;
+}CORE1001_CHN_INIT_PARAM;
 typedef struct _core_1001_init{
+	CORE1001_CHN_INIT_PARAM chnInfo[CORE_CHN_MAX];
+	int nChannels;
 	OSA_SemHndl *notify;
 	bool bEncoder;
 	bool bRender;
 	bool bHideOSD;
+	int renderFPS;
 }CORE1001_INIT_PARAM;
 typedef cv::Rect_<float> Rect2f;
 class ICore_1001 : public ICore

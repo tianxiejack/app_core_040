@@ -328,5 +328,6 @@ src/main_process.o : ../src/main_process.cpp \
     /usr/include/linux/v4l2-common.h \
     /usr/include/linux/v4l2-controls.h \
     ../include/encTrans.hpp \
+    ../include/gst_capture.h \
     ../src/cr_osa/inc/osa_image_queue.h \
     ../include/cuda_convert.cuh

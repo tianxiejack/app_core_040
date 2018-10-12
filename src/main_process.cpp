@@ -181,9 +181,12 @@ static int init(bool bRender = false)
 
 	ENCTRAN_InitPrm enctranInit;
 	memset(&enctranInit, 0, sizeof(enctranInit));
+	enctranInit.nChannels = QUE_CHID_COUNT;
 	enctranInit.iTransLevel = 1;
 	enctranInit.defaultEnable[0] = true;
 	enctranInit.defaultEnable[1] = true;
+	enctranInit.imgSize[0] = cv::Size(TV_WIDTH, TV_HEIGHT);
+	enctranInit.encPrm[0].fps = TV_FPS;
 	enctranInit.encPrm[0].bitrate = BITRATE_4M;
 	enctranInit.encPrm[0].minQP = MIN_QP_4M;
 	enctranInit.encPrm[0].maxQP = MAX_QP;
@@ -191,6 +194,8 @@ static int init(bool bRender = false)
 	enctranInit.encPrm[0].maxQI = MAX_I;
 	enctranInit.encPrm[0].minQB = -1;
 	enctranInit.encPrm[0].maxQB = -1;
+	enctranInit.imgSize[1] = cv::Size(HOT_WIDTH, HOT_HEIGHT);
+	enctranInit.encPrm[1].fps = HOT_FPS;
 	enctranInit.encPrm[1].bitrate = BITRATE_4M;
 	enctranInit.encPrm[1].minQP = MIN_QP_4M;
 	enctranInit.encPrm[1].maxQP = MAX_QP;

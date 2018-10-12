@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/gst_capture.cpp \
 ../src/main.cpp \
 ../src/main_cap.cpp \
 ../src/main_core.cpp \
@@ -12,6 +13,7 @@ CPP_SRCS += \
 ../src/main_process.cpp 
 
 OBJS += \
+./src/gst_capture.o \
 ./src/main.o \
 ./src/main_cap.o \
 ./src/main_core.o \
@@ -20,6 +22,7 @@ OBJS += \
 ./src/main_process.o 
 
 CPP_DEPS += \
+./src/gst_capture.d \
 ./src/main.d \
 ./src/main_cap.d \
 ./src/main_core.d \

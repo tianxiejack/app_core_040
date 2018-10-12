@@ -363,6 +363,14 @@ int main_core(int argc, char **argv)
 	core = (ICore_1001 *)ICore::Qury(COREID_1001);
 	CORE1001_INIT_PARAM initParam;
 	memset(&initParam, 0, sizeof(initParam));
+	initParam.nChannels = QUE_CHID_COUNT;
+	initParam.renderFPS = DIS_FPS;
+	initParam.chnInfo[TV_DEV_ID].imgSize = cv::Size(TV_WIDTH, TV_HEIGHT);
+	initParam.chnInfo[TV_DEV_ID].fps = TV_FPS;
+	initParam.chnInfo[TV_DEV_ID].format = V4L2_PIX_FMT_YUYV;
+	initParam.chnInfo[HOT_DEV_ID].imgSize = cv::Size(HOT_WIDTH, HOT_HEIGHT);
+	initParam.chnInfo[HOT_DEV_ID].fps = HOT_FPS;
+	initParam.chnInfo[HOT_DEV_ID].format = V4L2_PIX_FMT_GREY;
 	initParam.bRender = bRender;
 	initParam.bEncoder = true;
 	core->init(&initParam, sizeof(initParam));
