@@ -37,7 +37,7 @@ public:
 	virtual void Ontimer();
 	virtual bool OnPreProcess(int chId, Mat &frame);
 	virtual bool OnProcess(int chId, Mat &frame);
-	virtual int OnOSD(int chId, Mat dc);
+	virtual int OnOSD(int chId, Mat dc, CvScalar color);
 
 	int WriteCalibAxisToFile();
 	int ReadCalibAxisFromFile();

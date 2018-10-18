@@ -12,6 +12,9 @@
 #include "cuda_convert.cuh"
 #include "sync422_trans.h"
 static unsigned char *memI420 = NULL;
+extern RecordHandle * record_handle[QUE_CHID_COUNT];
+extern void initGstCap(void *notifys[]);
+extern void UninitGstCap();
 
 void processFrame_gst(int cap_chid,unsigned char *src, struct v4l2_buffer capInfo, int format)
 {
@@ -52,7 +55,7 @@ int main_gst(int argc, char **argv)
 	ret = sync422_ontime_ctrl(ctrl_prm_chlMask, 0, 0x03);OSA_assert(ret == OSA_SOK);
 	printf("sync422_spi_create()... finish\n\n");
 	printf("initGstCap()...\n");
-	initGstCap();
+	initGstCap(NULL);
 	printf("initGstCap()... finish\n\n");
 	ChosenCaptureGroup *grop[2];
 	grop[0] = ChosenCaptureGroup :: GetTVInstance();

@@ -13,7 +13,7 @@
 #include "osa_buf.h"
 #include "osa_sem.h"
 
-#define DS_DC_CNT		(2)
+#define DS_DC_CNT		(1)
 
 using namespace std;
 using namespace cv;

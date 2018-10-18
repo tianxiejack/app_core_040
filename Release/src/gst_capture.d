@@ -31,8 +31,8 @@ src/gst_capture.o : ../src/gst_capture.cpp \
     /usr/include/aarch64-linux-gnu/bits/stdlib.h \
     /usr/include/string.h \
     /usr/include/aarch64-linux-gnu/bits/string3.h \
-    ../include/gst_capture.h \
     ../include/StlGlDefines.h \
+    ../include/gst_capture.h \
     ../src/cr_osa/inc/osa_buf.h \
     /usr/lib/gcc/aarch64-linux-gnu/5/include/stdint.h \
     /usr/include/stdint.h \

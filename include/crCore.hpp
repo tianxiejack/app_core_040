@@ -69,6 +69,7 @@ typedef struct _core_1001_init{
 	bool bHideOSD;
 	int renderFPS;
 	int *encoderParamTab[3];
+	char *encStreamIpaddr;
 }CORE1001_INIT_PARAM;
 typedef cv::Rect_<float> Rect2f;
 class ICore_1001 : public ICore

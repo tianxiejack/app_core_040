@@ -1,6 +1,7 @@
 #if 1
 #include <stdlib.h>
 #include <string.h>
+#include "StlGlDefines.h"
 #include "gst_capture.h"
 #include"sync422_trans.h"
 

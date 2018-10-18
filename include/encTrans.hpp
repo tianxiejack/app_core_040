@@ -30,10 +30,14 @@ typedef struct _enctran_enc_param
 	int minQB;
 	int maxQB;
 }ENCTRAN_encPrm;
+
 typedef struct _enctran_init_param
 {
+	bool bRtp;
+	char destIpaddr[32];
 	int iTransLevel;
 	bool defaultEnable[ENT_CHN_MAX];
+	CAPTURE_SRC srcType[ENT_CHN_MAX];
 	ENCTRAN_encPrm encPrm[ENT_CHN_MAX];
 	cv::Size imgSize[ENT_CHN_MAX];
 	int nChannels;
@@ -42,7 +46,8 @@ typedef struct _enctran_init_param
 class CEncTrans
 {
 public:
-	CEncTrans(){
+	CEncTrans():m_bCreateSync422(false){
+		memset(m_record_handle, 0, sizeof(m_record_handle));
 		memset(m_enable, 0, sizeof(m_enable));
 		memset(m_semScheduler, 0, sizeof(m_semScheduler));
 		memset(m_bufQue, 0, sizeof(m_bufQue));
@@ -80,11 +85,12 @@ public:
 	int m_curTransMask;
 
 protected:
+	bool m_bCreateSync422;
 	OSA_MutexHndl m_mutex;
 	OSA_SemHndl *m_semScheduler[ENT_CHN_MAX];
 	GstCapture_data m_gstCapture_data[ENT_CHN_MAX];
 	RecordHandle * m_record_handle[ENT_CHN_MAX];
-	int createEncoder(int chId);
+	int createEncoder(int chId, CAPTURE_SRC srcType, char *ipAddr = NULL);
 	int deleteEncoder(int chId);
 private:
 };

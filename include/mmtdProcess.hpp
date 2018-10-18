@@ -32,7 +32,7 @@ public :
 	virtual ~CMMTDProcess();
 	virtual int process(int chId, int fovId, int ezoomx, Mat frame);
 	virtual int dynamic_config(int type, int iPrm, void* pPrm = NULL, int prmSize = 0);
-	virtual int OnOSD(int chId, Mat dc);
+	virtual int OnOSD(int chId, Mat dc, CvScalar color);
 
 	bool m_bEnable;
 	TARGETBOX m_target[MAX_TGT_NUM];

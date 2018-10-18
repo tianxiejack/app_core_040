@@ -44,6 +44,8 @@ typedef struct _VP_cfg_mainChId_prm{
 class CTrackerProc : public CProcessBase
 {
 	MAIN_ProcThrObj	mainProcThrObj;
+	unsigned char *m_mainMem[2];
+	Mat mainFramegray[2];
 	Mat mainFrame[2];
 
 public://close
@@ -98,16 +100,17 @@ public://open
 	virtual bool OnProcess(int chId, Mat &frame){
 		if(m_usrNotifySem != NULL && m_curChId == chId)
 			OSA_semSignal(m_usrNotifySem);
-		OnOSD(chId, m_dc[chId]);
+		OnOSD(chId, m_dc[chId], m_color);
 		return true;
 	}
-	virtual int OnOSD(int chId, Mat dc){
-		return CProcessBase::OnOSD(chId, dc);
+	virtual int OnOSD(int chId, Mat dc, CvScalar color){
+		return CProcessBase::OnOSD(chId, dc, color);
 	};
 
 	bool algOsdRect;
 	bool TrkAim43;
 	bool moveStat;
+	CvScalar m_color;
 protected:
 	//CRender m_render;
 	//CEncTrans m_render;
@@ -127,7 +130,6 @@ protected:
 	void update_acqRc();
 
 private:
-	OSA_MutexHndl m_mutex;
 	char m_strDisplay[128];
 	char m_strDisplay1[128];
 
@@ -147,7 +149,7 @@ private:
 		return NULL;
 	}
 
-	static void extractYUYV2Gray2(Mat src, Mat dst);
+	//static void extractYUYV2Gray(Mat src, Mat dst);
 
 	static int64 tstart;
 

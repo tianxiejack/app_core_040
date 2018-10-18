@@ -22,6 +22,11 @@
 #include "sync422_trans.h"
 #include "Displayer.hpp"
 #include "osa_image_queue.h"
+
+extern RecordHandle * record_handle[QUE_CHID_COUNT];
+extern void initGstCap(void *notifys[]);
+extern void UninitGstCap();
+
 static int curChannel = TV_DEV_ID;
 static Mat osd_test_TV;
 static Mat osd_test_HOT;
@@ -162,7 +167,7 @@ int main_osd(int argc, char **argv)
 	ret = sync422_ontime_ctrl(ctrl_prm_uartrate, 0, 2);OSA_assert(ret == OSA_SOK);
 	ret = sync422_ontime_ctrl(ctrl_prm_chlMask, 0, 0x03);OSA_assert(ret == OSA_SOK);
 
-	initGstCap();
+	initGstCap(NULL);
 	retRate[TV_DEV_ID]=ChangeBitRate(record_handle[HOT_DEV_ID],BITRATE_2M);
 	retRate[HOT_DEV_ID]=ChangeBitRate(record_handle[TV_DEV_ID],BITRATE_2M);
 	ChangeQP_range(record_handle[HOT_DEV_ID],MIN_QP_2M, MAX_QP, MIN_I_2M, MAX_I, -1, -1);

@@ -1,15 +1,15 @@
 #ifndef  _GST_CAPTURE_H
 #define _GST_CAPTURE_H
 
-#include "StlGlDefines.h"
 #include "osa_buf.h"
 #include "osa_sem.h"
 
 typedef int (*SendDataCallback)   (int dtype, unsigned char *buf, int size);
 
+
 typedef enum
 {
-	FLIP_METHOD_NONE,
+	FLIP_METHOD_NONE = 0,
 	FLIP_METHOD_COUNTERCLOCKWISE,
 	FLIP_METHOD_ROTATE_180,
 	FLIP_METHOD_CLOCKWISE,
@@ -22,13 +22,13 @@ typedef enum
 
 typedef enum
 {
-	XIMAGESRC,
+	XIMAGESRC = 0,
 	APPSRC
 }CAPTURE_SRC;
 
 enum
 {
-	ENC_MIN_QP,
+	ENC_MIN_QP = 0,
 	ENC_MAX_QP,
 	ENC_MIN_QI,
 	ENC_MAX_QI,
@@ -36,7 +36,6 @@ enum
 	ENC_MAX_QB,
 	ENC_QP_PARAMS_COUNT
 };
-
 typedef struct _recordHandle
 {
 	int index;
@@ -74,23 +73,17 @@ typedef struct _gstCapture_data
 	void *notify;
 }GstCapture_data;
 
-extern RecordHandle * record_handle[QUE_CHID_COUNT];
-
-void initGstCap(void *notifys[] = NULL);
-void UninitGstCap();
-
 RecordHandle * gstCaptureInit( GstCapture_data gstCapture_data );
 
-int gstCapturePushData(RecordHandle *handle, char *pbuffer , int datasize);
-
 int gstCaptureUninit(RecordHandle *handle);
+
+int gstCapturePushData(RecordHandle *handle, char *pbuffer , int datasize);
 
 int gstCaptureEnable(RecordHandle *handle, unsigned short bEnable);
 
 int ChangeBitRate(RecordHandle *handle,unsigned int bitrate);
 
 int ChangeQP_range(RecordHandle *recordHandle,int minQP, int maxQP, int minQI, int maxQI, int minQB, int maxQB);
-
 /*
 #ifdef __cplusplus
 extern "C"

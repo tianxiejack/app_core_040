@@ -17,6 +17,7 @@
 #include "osa_buf.h"
 #include "osa_sem.h"
 #include "osa_msgq.h"
+#include "osa_mutex.h"
 
 using namespace std;
 using namespace cv;
@@ -47,15 +48,22 @@ class IProcess
 public:
 	virtual int process(int chId, int fovId, int ezoomx, Mat frame) = 0;
 	virtual int dynamic_config(int type, int iPrm, void* pPrm = NULL, int prmSize = 0) = 0;
-	virtual int OnOSD(int chId, Mat dc) = 0;
+	virtual int OnOSD(int chId, Mat dc, CvScalar color) = 0;
 };
 
 class CProcessBase : public IProcess
 {
 	IProcess *m_proc;
 public:
-	CProcessBase(IProcess *proc):m_proc(proc){};
-	virtual ~CProcessBase(){};
+	OSA_MutexHndl m_mutexlock;
+	CProcessBase(IProcess *proc):m_proc(proc){
+		OSA_mutexCreate(&m_mutexlock);
+	};
+	virtual ~CProcessBase(){
+		OSA_mutexUnlock(&m_mutexlock);
+		OSA_mutexLock(&m_mutexlock);
+		OSA_mutexDelete(&m_mutexlock);
+	};
 	virtual int process(int chId, int fovId, int ezoomx, Mat frame){
 		//cout<<"CProcessBase process"<<endl;
 
@@ -70,10 +78,10 @@ public:
 			return m_proc->dynamic_config(type, iPrm, pPrm, prmSize);
 		return 0;
 	};
-	virtual int OnOSD(int chId, Mat dc)
+	virtual int OnOSD(int chId, Mat dc, CvScalar color)
 	{
 		if(m_proc != NULL)
-			return m_proc->OnOSD(chId, dc);
+			return m_proc->OnOSD(chId, dc, color);
 	}
 };
 
