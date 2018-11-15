@@ -258,7 +258,7 @@ src/main_core.o : ../src/main_core.cpp \
     /usr/include/aarch64-linux-gnu/bits/unistd.h \
     ../src/capture/thread.h \
     ../include/crCore.hpp \
-    ../src/cr_osa/inc/osa.h \
+    ../include/osa/osa.h \
     /usr/include/signal.h \
     /usr/include/aarch64-linux-gnu/bits/signum.h \
     /usr/include/aarch64-linux-gnu/bits/siginfo.h \
@@ -270,8 +270,8 @@ src/main_core.o : ../src/main_core.cpp \
     /usr/include/aarch64-linux-gnu/sys/procfs.h \
     /usr/include/aarch64-linux-gnu/sys/user.h \
     /usr/include/aarch64-linux-gnu/bits/sigthread.h \
-    ../src/cr_osa/inc/osa_debug.h \
-    ../src/cr_osa/inc/osa_sem.h \
+    ../include/osa/osa_debug.h \
+    ../include/osa/osa_sem.h \
     ../src/capture/ChosenCaptureGroup.h \
     ../src/capture/CaptureGroup.h \
     ../include/StlGlDefines.h \
@@ -322,6 +322,6 @@ src/main_core.o : ../src/main_core.cpp \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/driver_functions.h \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/vector_functions.h \
     /usr/local/cuda-8.0/bin/../targets/aarch64-linux/include/vector_functions.hpp \
-    ../src/cr_osa/inc/osa_buf.h \
-    ../src/cr_osa/inc/osa_que.h \
-    ../src/cr_osa/inc/osa_mutex.h
+    ../include/osa/osa_buf.h \
+    ../include/osa/osa_que.h \
+    ../include/osa/osa_mutex.h

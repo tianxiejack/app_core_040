@@ -1,0 +1,13 @@
+%YAML:1.0
+cfg_blob_threshold: 0.15
+cfg_blob_roi_width: 500
+cfg_blob_roi_height: 350
+cfg_blob_area_min: 2500
+cfg_blob_area_max: 10000
+cfg_blob_ratio_min: 0.2
+cfg_blob_ratio_max: 5.0
+
+
+
+
+

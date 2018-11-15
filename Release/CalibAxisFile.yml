@@ -1,12 +1,12 @@
 %YAML:1.0
-calib_x_0-0: 877.
-calib_y_0-0: 486.
-calib_x_0-1: 930.
-calib_y_0-1: 478.
-calib_x_0-2: 1009.
-calib_y_0-2: 446.
-calib_x_0-3: 1134.
-calib_y_0-3: 440.
+calib_x_0-0: 960.
+calib_y_0-0: 540.
+calib_x_0-1: 960.
+calib_y_0-1: 540.
+calib_x_0-2: 960.
+calib_y_0-2: 540.
+calib_x_0-3: 960.
+calib_y_0-3: 540.
 calib_x_0-4: 960.
 calib_y_0-4: 540.
 calib_x_0-5: 960.
@@ -31,8 +31,8 @@ calib_x_0-14: 960.
 calib_y_0-14: 540.
 calib_x_0-15: 960.
 calib_y_0-15: 540.
-calib_x_1-0: 624.
-calib_y_1-0: 540.
+calib_x_1-0: 640.
+calib_y_1-0: 512.
 calib_x_1-1: 960.
 calib_y_1-1: 540.
 calib_x_1-2: 960.

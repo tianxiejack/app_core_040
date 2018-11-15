@@ -252,8 +252,8 @@ src/capture/CaptureGroup.o : ../src/capture/CaptureGroup.cpp \
     /usr/include/asm-generic/posix_types.h \
     /usr/include/linux/v4l2-common.h \
     /usr/include/linux/v4l2-controls.h \
-    ../src/cr_osa/inc/osa_buf.h \
-    ../src/cr_osa/inc/osa.h \
+    ../include/osa/osa_buf.h \
+    ../include/osa/osa.h \
     /usr/include/signal.h \
     /usr/include/aarch64-linux-gnu/bits/signum.h \
     /usr/include/aarch64-linux-gnu/bits/siginfo.h \
@@ -265,12 +265,12 @@ src/capture/CaptureGroup.o : ../src/capture/CaptureGroup.cpp \
     /usr/include/aarch64-linux-gnu/sys/procfs.h \
     /usr/include/aarch64-linux-gnu/sys/user.h \
     /usr/include/aarch64-linux-gnu/bits/sigthread.h \
-    ../src/cr_osa/inc/osa_debug.h \
+    ../include/osa/osa_debug.h \
     /usr/include/libio.h \
     /usr/include/_G_config.h \
     /usr/include/aarch64-linux-gnu/bits/sys_errlist.h \
     /usr/include/aarch64-linux-gnu/bits/stdio.h \
     /usr/include/aarch64-linux-gnu/bits/stdio2.h \
-    ../src/cr_osa/inc/osa_que.h \
-    ../src/cr_osa/inc/osa_mutex.h \
+    ../include/osa/osa_que.h \
+    ../include/osa/osa_mutex.h \
     /usr/lib/gcc/aarch64-linux-gnu/5/include/stdbool.h
